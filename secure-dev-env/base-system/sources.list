@@ -1,12 +1,13 @@
-# Debian 13 (Trixie) APT Repository Configuration
+# Debian Testing (Trixie) APT Repository Configuration
+# Use 'testing' instead of 'trixie' until official release
+
 # Main repositories
-deb http://deb.debian.org/debian/ trixie main contrib non-free non-free-firmware
-deb-src http://deb.debian.org/debian/ trixie main contrib non-free non-free-firmware
+deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware
 
-# Security updates
-deb http://deb.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
-deb-src http://deb.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+# Security updates (testing-security may not always exist)
+deb http://deb.debian.org/debian-security testing-security main contrib non-free non-free-firmware
+deb-src http://deb.debian.org/debian-security testing-security main contrib non-free non-free-firmware
 
-# Updates
-deb http://deb.debian.org/debian/ trixie-updates main contrib non-free non-free-firmware
-deb-src http://deb.debian.org/debian/ trixie-updates main contrib non-free non-free-firmware
+# Proposed updates
+deb http://deb.debian.org/debian/ testing-proposed-updates main contrib non-free non-free-firmware
