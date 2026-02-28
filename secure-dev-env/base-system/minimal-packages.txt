@@ -6,9 +6,6 @@ curl
 wget
 git
 build-essential
-linux-headers-amd64
-firmware-linux-free
-firmware-linux-nonfree
 
 # System management
 apt-transport-https
@@ -25,5 +22,8 @@ traceroute
 
 # System monitoring
 htop
-iotop
 sysstat
+
+# Note: These packages will be installed by other scripts:
+# - linux-headers will be installed as linux-headers-$(uname -r)
+# - firmware packages may have different names depending on Debian version
