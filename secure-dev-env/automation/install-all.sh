@@ -66,24 +66,45 @@ log "Phase 1: Configuring base system..."
 
 if [ -f "$PROJECT_ROOT/base-system/sources.list" ]; then
     info "Backing up existing sources.list..."
-    sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%Y%m%d)
     
     info "Installing new APT sources..."
     sudo cp "$PROJECT_ROOT/base-system/sources.list" /etc/apt/sources.list
     
     info "Updating package lists..."
-    sudo apt update
+    if ! sudo apt update; then
+        error "Failed to update package lists. Check /etc/apt/sources.list"
+    fi
     
     info "Upgrading existing packages..."
     sudo apt upgrade -y
     
     info "Installing minimal required packages..."
     if [ -f "$PROJECT_ROOT/base-system/minimal-packages.txt" ]; then
-        sudo apt install -y $(grep -v '^#' "$PROJECT_ROOT/base-system/minimal-packages.txt" | tr '\n' ' ')
+        # Read packages line by line and install individually to avoid single failure
+        while IFS= read -r package || [ -n "$package" ]; do
+            # Skip comments and empty lines
+            [[ "$package" =~ ^#.*$ ]] && continue
+            [[ -z "$package" ]] && continue
+            
+            # Trim whitespace
+            package=$(echo "$package" | xargs)
+            
+            if sudo apt install -y "$package"; then
+                info "✓ Installed: $package"
+            else
+                warn "✗ Failed to install: $package (skipping)"
+            fi
+        done < "$PROJECT_ROOT/base-system/minimal-packages.txt"
     fi
 else
     warn "sources.list not found. Skipping base system configuration."
 fi
+
+# Fix broken dependencies if any
+info "Fixing any broken dependencies..."
+sudo apt --fix-broken install -y
+sudo apt autoremove -y
 
 # ==========================================
 # Phase 2: Security Hardening
@@ -307,4 +328,5 @@ read -p "Reboot now? (recommended) (y/n) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo reboot
+
 fi
