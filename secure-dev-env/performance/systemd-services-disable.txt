@@ -1,0 +1,12 @@
+# Services to Disable for Resource Optimization
+# Comment out any service you need to keep
+
+bluetooth.service
+cups.service
+cups-browsed.service
+avahi-daemon.service
+ModemManager.service
+tracker-miner-fs.service
+tracker-store.service
+packagekit.service
+whoopsie.service

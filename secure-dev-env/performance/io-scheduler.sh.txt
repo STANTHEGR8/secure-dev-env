@@ -1,0 +1,43 @@
+#!/bin/bash
+# I/O Scheduler Configuration for HDD
+
+set -e
+
+echo "Configuring BFQ I/O scheduler for HDD..."
+
+# Create udev rule for automatic BFQ scheduler on HDDs
+sudo tee /etc/udev/rules.d/60-ioschedulers.rules > /dev/null << 'EOF'
+# Set BFQ scheduler for rotational disks (HDD)
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+
+# Set none/noop for SSDs
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+
+# Set mq-deadline for NVMe
+ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="mq-deadline"
+EOF
+
+# Reload udev rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+# Apply immediately to current disks
+for disk in /sys/block/sd*/queue/scheduler; do
+    if [ -f "$disk" ]; then
+        DEVICE=$(echo "$disk" | cut -d'/' -f4)
+        ROTATIONAL=$(cat /sys/block/$DEVICE/queue/rotational)
+        
+        if [ "$ROTATIONAL" = "1" ]; then
+            echo "bfq" | sudo tee /sys/block/$DEVICE/queue/scheduler
+            echo "Set BFQ scheduler for $DEVICE (HDD)"
+        else
+            echo "none" | sudo tee /sys/block/$DEVICE/queue/scheduler
+            echo "Set none scheduler for $DEVICE (SSD)"
+        fi
+    fi
+done
+
+echo "I/O scheduler configuration complete!"
+echo ""
+echo "Current schedulers:"
+grep "" /sys/block/sd*/queue/scheduler 2>/dev/null || echo "No SCSI disks found"

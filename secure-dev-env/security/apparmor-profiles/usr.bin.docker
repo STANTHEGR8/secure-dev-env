@@ -1,0 +1,78 @@
+#include <tunables/global>
+
+/usr/bin/docker flags=(complain) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+  
+  # Capabilities
+  capability sys_admin,
+  capability sys_resource,
+  capability dac_override,
+  capability dac_read_search,
+  capability setuid,
+  capability setgid,
+  capability net_admin,
+  capability net_raw,
+  capability sys_chroot,
+  capability sys_ptrace,
+  capability audit_write,
+  
+  # Network access
+  network inet stream,
+  network inet6 stream,
+  network unix stream,
+  network netlink raw,
+  
+  # Docker socket and runtime
+  /var/run/docker.sock rw,
+  /var/run/docker/ rw,
+  /var/run/docker/** rw,
+  
+  # Docker storage
+  /var/lib/docker/ rw,
+  /var/lib/docker/** rwk,
+  
+  # Container filesystems
+  /var/lib/docker/overlay2/** rwk,
+  /var/lib/docker/containers/** rwk,
+  /var/lib/docker/image/** rw,
+  /var/lib/docker/volumes/** rwk,
+  
+  # Proc filesystem
+  @{PROC}/ r,
+  @{PROC}/** r,
+  @{PROC}/sys/kernel/random/uuid r,
+  @{PROC}/sys/net/core/somaxconn r,
+  
+  # System binaries
+  /bin/** rix,
+  /usr/bin/** rix,
+  /sbin/** rix,
+  /usr/sbin/** rix,
+  
+  # Configuration
+  /etc/docker/ r,
+  /etc/docker/** r,
+  
+  # Libraries
+  /lib/** rm,
+  /usr/lib/** rm,
+  
+  # Temporary files
+  /tmp/** rw,
+  
+  # Allow execution of container runtimes
+  /usr/bin/runc rix,
+  /usr/bin/containerd-shim-runc-v2 rix,
+  
+  # Device access
+  /dev/null rw,
+  /dev/zero rw,
+  /dev/full rw,
+  /dev/random r,
+  /dev/urandom r,
+  
+  # Signal handling
+  signal (receive) peer=unconfined,
+  signal (send) peer=/usr/bin/docker,
+}

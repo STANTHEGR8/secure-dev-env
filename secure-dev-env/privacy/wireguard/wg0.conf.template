@@ -1,0 +1,35 @@
+# /etc/wireguard/wg0.conf
+# WireGuard VPN Configuration Template
+# Replace <PLACEHOLDERS> with actual values
+
+[Interface]
+# Client private key (generate with: wg genkey)
+PrivateKey = <YOUR_PRIVATE_KEY>
+
+# Client IP address on VPN network
+Address = 10.8.0.2/24
+
+# DNS server (use VPN's DNS or 10.8.0.1)
+DNS = 10.8.0.1
+
+# VPN Kill Switch - Block all traffic if VPN disconnects
+PostUp = nft add rule inet filter output oifname != "wg0" drop
+PostUp = nft add rule inet filter output oifname "lo" accept
+PostUp = nft add rule inet filter output ct state established,related accept
+
+# Restore normal firewall rules on disconnect
+PostDown = nft flush ruleset
+PostDown = nft -f /etc/nftables.conf
+
+[Peer]
+# VPN server public key
+PublicKey = <SERVER_PUBLIC_KEY>
+
+# VPN server endpoint (IP:Port)
+Endpoint = <VPN_SERVER_IP>:51820
+
+# Route all traffic through VPN
+AllowedIPs = 0.0.0.0/0, ::/0
+
+# Keep connection alive
+PersistentKeepalive = 25

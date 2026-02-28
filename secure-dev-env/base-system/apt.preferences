@@ -1,0 +1,14 @@
+# APT Package Pinning Policies
+# Prefer packages from Trixie stable
+Package: *
+Pin: release a=trixie
+Pin-Priority: 900
+
+# Lower priority for testing/unstable unless explicitly requested
+Package: *
+Pin: release a=testing
+Pin-Priority: 400
+
+Package: *
+Pin: release a=unstable
+Pin-Priority: 300

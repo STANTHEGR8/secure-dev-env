@@ -1,0 +1,58 @@
+# /etc/fail2ban/jail.local
+# Fail2ban Configuration
+
+[DEFAULT]
+# Ban duration: 1 hour
+bantime = 3600
+
+# Time window for counting failures: 10 minutes
+findtime = 600
+
+# Number of failures before ban
+maxretry = 3
+
+# Email notifications (configure if needed)
+# destemail = admin@localhost
+# sendername = Fail2Ban
+# action = %(action_mwl)s
+
+# Backend: systemd journal
+backend = systemd
+
+# ===== SSH PROTECTION =====
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 7200
+findtime = 600
+
+# SSH brute force (aggressive)
+[sshd-aggressive]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 5
+findtime = 300
+bantime = 3600
+
+# SSH DDoS protection
+[sshd-ddos]
+enabled = true
+port = 22
+filter = sshd-ddos
+logpath = /var/log/auth.log
+maxretry = 10
+findtime = 60
+bantime = 3600
+
+# ===== DOCKER PROTECTION (optional) =====
+[docker-auth]
+enabled = false
+port = 2375,2376
+filter = docker-auth
+logpath = /var/log/docker.log
+maxretry = 3

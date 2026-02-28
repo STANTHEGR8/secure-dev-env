@@ -1,0 +1,24 @@
+# /etc/cloudflared/config.yml
+# DNS-over-HTTPS Configuration
+
+# Enable DNS proxy
+proxy-dns: true
+
+# Listen on localhost port 5053
+proxy-dns-port: 5053
+
+# Upstream DNS resolvers (DoH endpoints)
+proxy-dns-upstream:
+  - https://1.1.1.1/dns-query
+  - https://1.0.0.1/dns-query
+  - https://9.9.9.9/dns-query
+  - https://149.112.112.112/dns-query
+
+# Enable EDNS
+proxy-dns-edns: true
+
+# Maximum upstream connections
+proxy-dns-max-upstream-conns: 5
+
+# Logging (set to debug for troubleshooting)
+loglevel: info

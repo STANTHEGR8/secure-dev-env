@@ -1,0 +1,29 @@
+# Minimal Required Packages List
+# Base system utilities
+sudo
+vim
+curl
+wget
+git
+build-essential
+linux-headers-amd64
+firmware-linux-free
+firmware-linux-nonfree
+
+# System management
+apt-transport-https
+ca-certificates
+gnupg
+lsb-release
+software-properties-common
+
+# Network utilities
+net-tools
+dnsutils
+iputils-ping
+traceroute
+
+# System monitoring
+htop
+iotop
+sysstat
