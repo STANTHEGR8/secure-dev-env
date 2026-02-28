@@ -138,13 +138,47 @@ sudo systemctl enable apparmor
 sudo systemctl start apparmor
 
 # Install nftables firewall
+# Install nftables firewall
 info "Installing and configuring nftables firewall..."
 sudo apt install -y nftables
 
 if [ -f "$PROJECT_ROOT/security/nftables.conf" ]; then
+    # Backup existing config
+    if [ -f /etc/nftables.conf ]; then
+        sudo cp /etc/nftables.conf /etc/nftables.conf.backup
+    fi
+    
+    # Copy new config
     sudo cp "$PROJECT_ROOT/security/nftables.conf" /etc/nftables.conf
-    sudo systemctl enable nftables
-    sudo systemctl restart nftables
+    sudo chmod +x /etc/nftables.conf
+    
+    # Test configuration before enabling service
+    info "Testing nftables configuration..."
+    if sudo nft -c -f /etc/nftables.conf; then
+        info "✓ nftables configuration is valid"
+        
+        # Load rules
+        if sudo nft -f /etc/nftables.conf; then
+            info "✓ nftables rules loaded successfully"
+            
+            # Enable service
+            sudo systemctl enable nftables
+            sudo systemctl start nftables
+            
+            if sudo systemctl is-active nftables &>/dev/null; then
+                info "✓ nftables service is running"
+            else
+                warn "nftables service failed to start"
+                warn "Check logs: sudo journalctl -xeu nftables.service"
+            fi
+        else
+            error "Failed to load nftables rules"
+        fi
+    else
+        error "nftables configuration has syntax errors"
+    fi
+else
+    warn "nftables.conf not found. Skipping firewall configuration."
 fi
 
 # Install AIDE
@@ -330,3 +364,4 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo reboot
 
 fi
+
