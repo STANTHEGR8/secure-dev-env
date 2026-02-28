@@ -237,19 +237,26 @@ fi
 # ==========================================
 log "Phase 4: Applying performance optimizations..."
 
-# ZRAM
+# ZRAM (optional, skip if fails)
 info "Installing ZRAM..."
-sudo apt install -y zram-tools
-
-sudo tee /etc/default/zramswap > /dev/null << 'ZRAMEOF'
+if sudo apt install -y zram-tools 2>/dev/null; then
+    info "✓ ZRAM installed"
+    
+    sudo tee /etc/default/zramswap > /dev/null << 'ZRAMEOF'
 ALLOCATION=75
 ALGO=zstd
 ZRAM_DEVICES=1
 ZRAMEOF
 
-sudo systemctl enable zramswap
-sudo systemctl restart zramswap || warn "ZRAM service failed"
+    sudo systemctl enable zramswap 2>/dev/null || true
+    sudo systemctl restart zramswap 2>/dev/null || warn "ZRAM service failed"
+else
+    warn "ZRAM installation failed (network issue), skipping"
+    warn "You can install it later with: sudo apt install zram-tools"
+fi
 
+# Continue with I/O scheduler regardless of ZRAM status
+info "Configuring I/O scheduler..."
 # I/O Scheduler
 info "Configuring I/O scheduler..."
 sudo tee /etc/udev/rules.d/60-ioschedulers.rules > /dev/null << 'UDEVEOF'
@@ -345,3 +352,4 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo reboot
 fi
+
