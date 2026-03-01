@@ -8,18 +8,9 @@ echo "Installing programming language toolchains..."
 # Update package list
 sudo apt update
 
-# ===== PYTHON =====
-echo "Installing Python..."
-sudo apt install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
-    python3-dev
-
 # ===== NODE.JS =====
 echo "Installing Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
+sudo apt install nodejs npm
 
 # ===== JAVA =====
 echo "Installing Java (OpenJDK)..."
@@ -53,4 +44,5 @@ node --version
 npm --version
 java --version
 gcc --version
+
 g++ --version
