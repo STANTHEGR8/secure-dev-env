@@ -9,7 +9,7 @@ find . -name "*.sh" -exec chmod +x {} +
 ```
 
 ```bash
-sed -i ""s/\r$//" automation/install-all.sh
+sed -i "s/\r$//" automation/install-all.sh
 ```
 Now run the installation. Follow the steps given below:
 
