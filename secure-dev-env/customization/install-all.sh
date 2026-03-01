@@ -71,7 +71,6 @@ bash "$SCRIPT_DIR/../developer-tools/install-ide.sh"
 # Phase 6: Customization
 log "Phase 6: Applying system customization..."
 # Add customization steps here
-#!/bin/bash
 ./custom-one.sh
 echo "Customization done. Reboot to apply it automatically."
 
@@ -94,3 +93,4 @@ echo "3. Run 'security-status' to verify configuration"
 echo ""
 
 echo "Full log: $LOG_FILE"
+
