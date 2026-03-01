@@ -319,6 +319,10 @@ echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https:
 sudo apt update
 sudo apt install -y code || warn "VS Code installation failed"
 
+echo "Main script starts"
+./install-failed-packages.sh  # Calls the second script
+echo "Main script continues after second script finishes"
+
 # ==========================================
 # Completion
 # ==========================================
@@ -352,4 +356,5 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo reboot
 fi
+
 
