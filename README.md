@@ -21,3 +21,4 @@ cd automation
 ./install-all.sh
 ```
 For further customization go the Customization directory and run the script of your choice.
+Restart the pc to apply changes.
